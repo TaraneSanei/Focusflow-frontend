@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+html{
+    background-color: var(--p-primary-600);
+}
+
+:root .p-selectbutton .month-days {
+
+    width: 45px;
+}

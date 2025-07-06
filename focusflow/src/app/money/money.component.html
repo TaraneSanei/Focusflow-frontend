@@ -1,0 +1,255 @@
+<div class="flex justify-center m-5 mb-0 lg:ml-0 lg:mr-0">
+    <div class=" bg-slate-50 rounded-2xl w-full mb-0 lg:w-3/4 p-5">
+    <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+    </div>
+</div>
+<div class="flex justify-center">
+    <div class="w-full lg:w-3/4 m-5 flow-root">
+        <!-- income and payments lists div -->
+        <div class="w-full md:w-1/3 float-left"> <!-- income div-->
+            <div class=" flex-col bg-slate-50 rounded-2xl p-2 aspect-8/7 md:mr-2">
+                <div class="text-xl flex justify-between  mb-2">
+                    <span class="mt-1 ml-1">Incomes</span>
+                    <!-- Add a new income button -->
+                    <p-button icon="pi pi-plus" severity="primary" fluid="true" (onClick)="openDialog('income')" />
+                </div>
+                <p-scrollPanel [style]="{ width: '100%', height: '86%' }">
+                    <div *ngFor="let income of Incomes()">
+                        <p-panel toggleable="true" collapsed="true" expandIcon="pi pi-angle-up"
+                            collapseIcon="pi pi-angle-down">
+                            <ng-template #header>
+                                {{income.Title}}
+                            </ng-template>
+                            <ng-template #footer>
+                                <div class="flex justify-end">
+                                    <p-button icon="pi pi-cog" severity="secondary" size="small" variant="text"
+                                        rounded="true"
+                                        (onClick)="income.Recurrence ? oe.toggle($event) : openDialog('income', income, false)"></p-button>
+                                    <p-button icon="pi pi-trash" severity="secondary" size="small" variant="text"
+                                        rounded="true"
+                                        (onClick)="income.Recurrence ? op.toggle($event) : deleteTransactionDialog($event,false, income)"></p-button>
+                                </div>
+                            </ng-template>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">{{income.Amount}} $</span>
+                                <span>{{income.Date}}</span>
+                            </div>
+                            <span class="italic">{{income.Left}} $ left
+                            </span>
+                        </p-panel>
+                        <p-popover #op>
+                            <div class="flex-col justify-center">
+                                <div class="m-1">
+                                    <p>this is an instance of a recurring income</p>
+                                </div>
+                                <div>
+                                    <p-button class="m-1" size="small" outlined="true" severity="secondary"
+                                        (onClick)="deleteTransactionDialog($event,false, income)">delete only this
+                                        income</p-button>
+                                    <p-button class="m-1" size="small" outlined="true" severity="danger"
+                                        (onClick)="deleteTransactionDialog($event,true, income)">delete the recurring
+                                        income</p-button>
+                                </div>
+                            </div>
+                        </p-popover>
+                        <p-popover #oe>
+                            <div class="flex-col justify-center">
+                                <div class="m-1">
+                                    <p>this is an instance of a recurring income</p>
+                                </div>
+                                <div>
+                                    <p-button class="m-1" size="small" outlined="true" severity="secondary"
+                                        (onClick)="openDialog('income',income,false)">Edit only this
+                                        income</p-button>
+                                    <p-button class="m-1" size="small" outlined="true" severity="danger"
+                                        (onClick)="openDialog('income',income,true)">Edit the recurring
+                                        income</p-button>
+                                </div>
+                            </div>
+                        </p-popover>
+                    </div>
+                </p-scrollPanel>
+            </div>
+            <div class="flex-col bg-slate-50 mt-2 mb-2 rounded-2xl p-2 aspect-8/7 md:mr-2 md:mb-0">
+                <div class="text-xl flex justify-between  mb-2">
+                    <span class="mt-1 ml-1">Payments <p-button
+                            [icon]="unpaidPayments() ? 'pi pi-eye': 'pi pi-eye-slash'" severity="secondary" size="small"
+                            variant="text" rounded="true" (onClick)="viewAllPayments()"></p-button></span>
+                    <p-button icon="pi pi-plus" severity="primary" fluid="true" (onClick)="openDialog('payment')" />
+                </div>
+                <p-scrollPanel [style]="{ width: '100%', height: '86%' }">
+                    <div *ngFor="let payment of Payments()">
+                        <p-panel  *ngIf="unpaidPayments() && !payment.Paid || !unpaidPayments()" toggleable="true"
+                            collapsed="true" expandIcon="pi pi-angle-up" collapseIcon="pi pi-angle-down">
+                            <ng-template #header>
+                                <div class="flex flex-justify-start">
+                                    <p-checkbox binary="true" (onChange)="payPayment(payment)"
+                                        [ngModel]="payment.Paid"></p-checkbox>
+                                    <p class="ml-2" [ngClass]="payment.Paid? 'line-through italic text-gray-400':''">
+                                        {{payment.Title}}</p>
+                                </div>
+                            </ng-template>
+                            <ng-template #footer>
+                                <div class=" flex justify-end">
+                                    <div class="flex">
+                                        <p-button icon="pi pi-cog" severity="secondary" size="small" rounded="true"
+                                            variant="text"
+                                            (onClick)="payment.Recurrence ? oe.toggle($event) : openDialog('payment', payment, false)"></p-button>
+                                        <p-button icon="pi pi-trash" severity="secondary" size="small" rounded="true"
+                                            variant="text"
+                                            (onClick)="payment.Recurrence ? op.toggle($event) : deleteTransactionDialog($event,false, payment)"></p-button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <div class="mt-2">
+                            <div class="flex justify-between">
+                                <span class="mt-2 font-semibold"
+                                    [ngClass]="payment.Paid? 'line-through italic text-gray-400':''">{{payment.Amount}}
+                                    $</span>
+                            </div>
+                            <div class="flex justify-between mt-4">
+                                <span>{{payment.Date}}</span>
+
+                                <span>{{payment.Priority.toLowerCase()}}
+                                </span>
+                            </div>
+                        </div>
+                        </p-panel>
+                        <p-popover #op>
+                            <div class="flex-col justify-center">
+                                <div class="m-1">
+                                    <p>this is an instance of a recurring payment</p>
+                                </div>
+                                <div>
+                                    <p-button class="m-1" size="small" outlined="true" severity="secondary"
+                                        (onClick)="deleteTransactionDialog($event,false, payment)">delete only this
+                                        payment</p-button>
+                                    <p-button class="m-1" size="small" outlined="true" severity="danger"
+                                        (onClick)="deleteTransactionDialog($event,true, payment)">delete the recurring
+                                        payment</p-button>
+                                </div>
+                            </div>
+                        </p-popover>
+                        <p-popover #oe>
+                            <div class="flex-col justify-center">
+                                <div class="m-1">
+                                    <p>this is an instance of a recurring payment</p>
+                                </div>
+                                <div>
+                                    <p-button class="m-1" size="small" outlined="true" severity="secondary"
+                                        (onClick)="openDialog('payment',payment, false)">Edit only this
+                                        payment</p-button>
+                                    <p-button class="m-1" size="small" outlined="true" severity="danger"
+                                        (onClick)="openDialog('payment', payment, true)">Edit the recurring
+                                        payment</p-button>
+                                </div>
+                            </div>
+                        </p-popover>
+                    </div>
+                </p-scrollPanel>
+            </div>
+        </div>
+
+        <p-toast />
+        <p-confirmdialog />
+        <!-- calendar div -->
+        <div class="bg-slate-200 w-full md:h-1/1 grow md:w-2/3 h-fit p-3 rounded-2xl float-right">
+            <full-calendar [options]="calendarOptions"></full-calendar>
+        </div>
+    </div>
+</div>
+<div class="flex justify-center">
+    <fieldset
+        class="grid grid-cols-1 gap-4 border-4 border-teal-50 rounded-2xl p-4 w-full lg:w-3/4 m-5 mt-0 md:grid-cols-2 lg:grid-cols-4">
+        <legend class="text-teal-50 text-2xl">Budgets</legend>
+        <div *ngFor="let budget of Budgets()">
+            <div [style.background-color]=budget.Color
+                class="flex flex-col justify-center p-4 rounded-2xl text-gray-600" *ngIf="budget.id !== editBudgetId()">
+                <div class="flex shadow-xs shadow-gray-500 p-6 rounded-sm font-semibold justify-center text-lg">
+                    {{budget.Title}}</div>
+                <div *ngIf="budget.id === increaseBudgetId()">
+                    <div class="flex justify-between mt-1">
+                        <p-inputNumber id="amount" spinnerMode="horizontal" [(ngModel)]="edittableBudget.Amount"
+                            [showButtons]="true" inputStyleClass="w-1/5" buttonLayout="horizontal" [step]="5"
+                            mode="currency" currency="USD" min="0" class="flex w-1/1">
+                            <ng-template #incrementbuttonicon>
+                                <span class="pi pi-plus"></span>
+                            </ng-template>
+                            <ng-template #decrementbuttonicon>
+                                <span class="pi pi-minus"></span>
+                            </ng-template>
+                        </p-inputNumber>
+                    </div>
+                    <div class="flex justify-end">
+                        <p-button class="m-2 mb-0" icon="pi pi-save" size="small" rounded="true" severity="secondary"
+                            (onClick)="saveBudget()"></p-button>
+
+                    </div>
+                </div>
+                <div *ngIf="budget.id !== increaseBudgetId()">
+                    <div class=" font-semibold mt-4 mb-2">
+                        Amount: {{budget.Amount}} $
+                    </div>
+                    <div class="flex justify-end">
+                        <p-button class="mr-2" icon="pi pi-plus" size="small" rounded="true" severity="secondary"
+                            (onClick)="increaseBudget(budget)"></p-button>
+                        <p-button class="mr-2" icon="pi pi-cog" size="small" rounded="true" severity="secondary"
+                            (onClick)="editBudget(budget)"></p-button>
+                        <p-button class="mr-2" icon="pi pi-trash" size="small" rounded="true" severity="secondary"
+                            (onClick)="deleteBudgetDialog($event,budget)"></p-button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col justify-center p-4 rounded-2xl text-gray-600 bg-white"
+                *ngIf="budget.id === editBudgetId()">
+                <div class="flex shadow-xs shadow-gray-500 p-3 rounded-sm">
+                    <p-iftalabel>
+                        <input id="title" pInputText [(ngModel)]="edittableBudget.Title">
+                        <label for="title">Title</label>
+                    </p-iftalabel>
+                </div>
+                <div class="flex justify-between mt-2">
+                    <div class="text-sm m-2">
+                        Color
+                        <p-colorpicker [(ngModel)]="edittableBudget.Color" />
+                    </div>
+                    <p-button class="mt-1" icon="pi pi-save" size="small" rounded="true" variant="text" severity="secondary"
+                        (onClick)="saveBudget()">
+                    </p-button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!newBudgetId()"
+            class="border-dashed items-center border-4 border-teal-50 h-48 flex p-2 rounded-2xl justify-center">
+            <p-button class="align-bottom" icon="pi pi-plus" severity="secondary" variant="text" rounded="true"
+                class="flex" (onClick)="addBudget()" styleClass="w-full flex"></p-button>
+        </div>
+        <div *ngIf="newBudgetId()" class="flex flex-col justify-center p-4 rounded-2xl text-gray-600 bg-white">
+            <div class="flex shadow-xs shadow-gray-500 p-3 rounded-sm justify-center">
+                <input id="title" pInputText [(ngModel)]="newBudget.Title">
+            </div>
+            <div class="flex justify-between mt-1">
+                <p-inputNumber id="amount" spinnerMode="horizontal" [(ngModel)]="newBudget.Amount" [showButtons]="true"
+                    inputStyleClass="w-1/5" buttonLayout="horizontal" [step]="5" mode="currency" currency="USD" min="0"
+                    class="flex w-1/1">
+                    <ng-template #incrementbuttonicon>
+                        <span class="pi pi-plus"></span>
+                    </ng-template>
+                    <ng-template #decrementbuttonicon>
+                        <span class="pi pi-minus"></span>
+                    </ng-template>
+                </p-inputNumber>
+            </div>
+            <div class="flex justify-between mt-2">
+                <div class="text-sm m-2">
+                    Color
+                    <p-colorpicker [(ngModel)]="newBudget.Color" />
+                </div>
+                <p-button class="mt-1" icon="pi pi-save" size="small" rounded="true" severity="secondary"
+                    (onClick)="saveNewBudget()">
+                </p-button>
+            </div>
+        </div>
+    </fieldset>
+
+</div>

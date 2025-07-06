@@ -1,0 +1,14 @@
+<div class="flex">
+<p-tabs class="w-full">
+    <p-tablist>
+        @for(tab of tabs; track tab.path){
+        <p-tab [value]="tab.path!" [routerLink]="tab.path" class="w-1/7 justify-center sm: text-sm">
+            <span>{{tab.title}}</span>
+        </p-tab>
+        }
+    </p-tablist>
+</p-tabs>
+</div>
+<div>
+    <router-outlet></router-outlet>
+</div>

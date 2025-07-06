@@ -1,0 +1,143 @@
+<div class="flex justify-center">
+    <div class="w-full lg:w-3/4 m-5">
+        <!-- the new journal car -->
+        <p-card styleClass="mb-2">
+            <div class=" rounded-xl p-2" [ngStyle]="{'background': buildGradient(newJournal.EmotionalStatus)}">
+                <div class="mb-2">
+                    <p-fluid class="flex flex-wrap gap-2.5">
+                        <p-floatlabel variant="in" class="w-1/1 lg:w-1/5">
+                            <p-datepicker fluid="true" inputId="date" [(ngModel)]="newJournal.DateTime"
+                                [showTime]="true" [showButtonBar]="true" />
+                            <label for="date">Date and Time</label>
+                        </p-floatlabel>
+                        <p-iftalabel class="w-1/1 lg:w-13/60">
+                            <p-multiselect [options]="emotions()" optionLabel="Emotion" size="small"
+                                [(ngModel)]="newJournal.EmotionalStatus" display="chip">
+                                <ng-template let-emotion #item>
+                                    <span class="flex w-full h-9 rounded-2xl" [style.background]="emotion.Color">
+                                        <p class="m-1.5">&nbsp;&nbsp;{{ emotion.Emotion }}</p>
+                                    </span>
+                                </ng-template>
+
+                            </p-multiselect>
+                            <label for="emotion">Emotional status</label>
+                        </p-iftalabel>
+                        <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                            <p class="ml-1.5 text-xs" style="color: #64748b;">Energy: {{ newJournal.Energy }}</p>
+                            <p-slider styleClass="m-3" [(ngModel)]="newJournal.Energy" min="0" max="10">
+                            </p-slider>
+                        </div>
+                        <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                            <p class="ml-1.5 text-xs" style="color: #64748b;">Motivation: {{ newJournal.Motivation }}
+                            </p>
+                            <p-slider styleClass="m-3" [(ngModel)]="newJournal.Motivation" min="0" max="10">
+                            </p-slider>
+                        </div>
+                        <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                            <p class="ml-1.5 text-xs" style="color: #64748b;">Noise: {{ newJournal.Noise }}</p>
+                            <p-slider styleClass="m-3" [(ngModel)]="newJournal.Noise" min="0" max="10">
+                            </p-slider>
+                        </div>
+
+                    </p-fluid>
+                </div>
+                <textarea rows="10" type="text" placeholder="How are you doing?" fluid="true" pTextarea
+                    [autoResize]="true" [(ngModel)]="newJournal.Note"></textarea>
+                <div>
+                    <p-button icon="pi pi-save" severity="secondary" size="small" rounded="true"
+                        (onClick)="Addjournal()"> </p-button>
+                </div>
+            </div>
+        </p-card>
+        <!-- div for list of all journals -->
+        <div (scroll)="onScroll($event)" *ngIf=" journal$ | async as JournalEntries">
+            <p-card *ngFor="let journal of JournalEntries" styleClass="mb-2">
+                <!-- journal note -->
+                <div *ngIf="editing() !== journal.id" class="rounded-xl p-2 text-white mb-2"
+                    [ngStyle]="{'background': buildGradient(journal.EmotionalStatus)}">
+                    <div class="rounded-xl p-2" style="background-color: rgba(1,1,1, 0.3) ;">
+                    <div class="flex justify-between ml-1 mr-1 mb-2">
+                        <div>
+                            <b>{{journal.DateTime | date:'EEEE, MMMM d, y, h:mm'}}</b>
+                        </div>
+                        <div>
+                            <b>Energy: {{journal.Energy}}</b>
+                        </div>
+                        <div>
+                            <b>Motivation: {{journal.Motivation}}</b>
+                        </div>
+                        <div>
+                            <b>Noise: {{journal.Noise}}</b>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <span *ngFor="let e of journal.EmotionalStatus">
+                            <em class="flex justify-center mr-2 rounded-2xl pl-3 pr-3 p-1" style="background-color: rgba(1,1,1, 0.3) ;" >{{e.Emotion}}</em>
+                        </span>
+                    </div>
+                </div>
+                    <div class="m-1 mb-4">
+                        {{journal.Note}}
+                    </div>
+                    <div>
+                        <p-button class="mr-2" icon="pi pi-pen-to-square" severity="secondary" size="small"
+                            rounded="true" (onClick)="toggleEdit(journal)"> </p-button>
+                        <p-button icon="pi pi-trash" severity="secondary" size="small" rounded="true"
+                            (onClick)="deleteJournal($event, journal)"> </p-button>
+                    </div>
+                </div>
+                <!-- edit journal -->
+                <div *ngIf="editing() === journal.id" class= "rounded-xl p-2" [ngStyle]="{'background': buildGradient(edittableJournal.EmotionalStatus)}">
+
+                    <div class="mb-2">
+                        <p-fluid class="flex flex-wrap gap-2.5">
+                            <p-floatlabel variant="in" class="w-1/1 lg:w-1/5">
+                                <p-datepicker fluid="true" inputId="date" [(ngModel)]="edittableJournal.DateTime"
+                                    [showTime]="true" [showButtonBar]="true" />
+                                <label for="date">Date and Time</label>
+                            </p-floatlabel>
+                            <p-iftalabel class="w-1/1 lg:w-13/60">
+                                <p-multiselect [options]="emotions()" optionLabel="Emotion" size="small"
+                                    [(ngModel)]="edittableJournal.EmotionalStatus" display="chip">
+                                    <ng-template let-emotion #item>
+                                        <span class="flex w-full h-9 rounded-2xl" [style.background]="emotion.Color">
+                                            <p class="m-1.5">&nbsp;&nbsp;{{ emotion.Emotion }}</p>
+                                        </span>
+                                    </ng-template>
+    
+                                </p-multiselect>
+                                <label for="emotion">Emotional status</label>
+                            </p-iftalabel>
+                            <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                                <p class="ml-1.5 text-xs" style="color: #64748b;">Energy: {{ edittableJournal.Energy }}</p>
+                                <p-slider styleClass="m-3" [(ngModel)]="edittableJournal.Energy" min="0" max="10">
+                                </p-slider>
+                            </div>
+                            <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                                <p class="ml-1.5 text-xs" style="color: #64748b;">Motivation: {{ edittableJournal.Motivation }}
+                                </p>
+                                <p-slider styleClass="m-3" [(ngModel)]="edittableJournal.Motivation" min="0" max="10">
+                                </p-slider>
+                            </div>
+                            <div class="rounded-md border-1 border-slate-300 bg-slate-50 p-1.5 w-1/1 lg:w-2/11">
+                                <p class="ml-1.5 text-xs" style="color: #64748b;">Noise: {{ edittableJournal.Noise }}</p>
+                                <p-slider styleClass="m-3" [(ngModel)]="edittableJournal.Noise" min="0" max="10">
+                                </p-slider>
+                            </div>
+    
+                        </p-fluid>
+                    </div>
+                    <textarea type="text" fluid="true" pTextarea [autoResize]="true"
+                        [(ngModel)]="edittableJournal.Note"></textarea>
+                    <div>
+                        <p-button class="mr-2" icon="pi pi-save" severity="secondary" size="small" rounded="true" (onClick)="Editjournal(journal)"> </p-button>
+                        <p-button icon="pi pi-times" severity="secondary" size="small" rounded="true" (onClick)="toggleEdit(journal)"> </p-button>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</div>
+<!-- delete confirm dialog -->
+<p-toast />
+<p-confirmdialog />

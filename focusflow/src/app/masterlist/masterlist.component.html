@@ -1,0 +1,72 @@
+<div class="flex justify-center">
+  <div class="flex h-1/1 gap-4 m-4 w-full p-2 lg:w-3/4 bg-slate-50 rounded-2xl">
+    <p-treetable rowHover="true" [value]="masterlistNode">
+      <ng-template #header>
+        <tr>
+          <th>Title</th>
+          <th></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-rowNode>
+        <tr [ttRow]="rowNode" (mouseenter)="hoveredRow = rowNode" (mouseleave)="hoveredRow = null">
+          <td>
+            <span>
+              <p-treetable-toggler [rowNode]="rowNode" />
+              &nbsp;<i [class]="rowNode.node.icon" *ngIf="rowNode.node.icon"></i>
+              &nbsp;{{ rowNode.node.data?.Title || '-' }}
+            </span>
+          </td>
+          <td>
+            <ng-container *ngIf="!isMobile; else mobileActions">
+              <div class="flex justify-end">
+                <div
+                  class="actions-container right-2 top-0 bottom-0 flex gap-2 items-center opacity-0 transition-opacity duration-150"
+                  [ngClass]="{'opacity-100': hoveredRow === rowNode || rowNode.expanded}">
+                  <p-button *ngIf="rowNode.node.type === 'project'" class="mr-2" icon="pi pi-clock" severity="secondary"
+                    size="small" rounded="true"> </p-button>
+                  <p-button
+                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                    class="mr-2" icon="pi pi-check" severity="secondary" size="small" rounded="true"> </p-button>
+                  <p-button class="mr-2" icon="pi pi-plus" severity="secondary" size="small" rounded="true"> </p-button>
+                  <p-button
+                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                    class="mr-2" icon="pi pi-hourglass" severity="secondary" size="small" rounded="true"> </p-button>
+                  <p-button
+                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                    class="mr-2" icon="pi pi-calendar-clock" severity="secondary" size="small" rounded="true">
+                  </p-button>
+                  <p-button class="mr-2" icon="pi pi-book" severity="secondary" size="small" rounded="true"> </p-button>
+                  <p-button class="mr-2" icon="pi pi-cog" severity="secondary" size="small" rounded="true"> </p-button>
+                  <p-button class="mr-2" icon="pi pi-trash" severity="secondary" size="small" rounded="true">
+                  </p-button>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #mobileActions>
+              <div class="flex justify-end">
+                <div
+                  class="actions-container right-2 top-0 bottom-0 flex gap-2 items-center opacity-0 transition-opacity duration-150"
+                  [ngClass]="{'opacity-100': hoveredRow === rowNode || rowNode.expanded}">
+                  <p-speeddial  [model]="getMenuItems(rowNode.node)" direction="left" class="mr-2">
+                    <ng-template #button let-toggleCallback="toggleCallback">
+                      <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" rounded="true"
+                        (click)="toggleCallback($event)">
+                      </p-button>
+                    </ng-template> <ng-template #item let-item let-toggleCallback="toggleCallback">
+                      <p-button size="small" severity="secondary" rounded="true" [icon]="item.icon"
+                        (click)="toggleCallback($event, item)">
+                      </p-button>
+                    </ng-template>
+                  </p-speeddial>
+                </div>
+              </div>
+            </ng-template>
+
+          </td>
+        </tr>
+      </ng-template>
+    </p-treetable>
+
+  </div>
+</div>

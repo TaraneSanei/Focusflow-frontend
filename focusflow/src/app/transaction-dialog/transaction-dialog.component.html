@@ -1,0 +1,140 @@
+<div class="flex justify-left">
+    <form [formGroup]="transactionForm" class="flex flex-col w-full">
+        <!-- basic information about the transaction -->
+        <p-iftalabel>
+            <input class="w-full mb-1" id="title" type="text" pInputText formControlName="title" />
+            <label for="title">Title</label>
+        </p-iftalabel>
+        <p-iftalabel>
+            <p-inputnumber class="w-1/1 mb-1" id="amount" placeholder="" formControlName="amount" mode="currency"
+                currency="USD" />
+            <label for="amount">Amount</label>
+        </p-iftalabel>
+        <p-iftalabel>
+        <div *ngIf="type === 'payment'">
+            <p-select class="m-1 lg:w-1/3" id="priorities" formControlName="priority" optionLabel="label" optionValue="value"
+                [options]="priorities"></p-select>
+        </div>
+        <label for="priorities">Priority</label>
+
+    </p-iftalabel>
+        <div *ngIf="type === 'income' || 'payment'">
+            <p-iftalabel>
+                <p-datePicker formControlName="date" class="w-1/1" fluid="true" id="date" dateFormat="dd/mm/yy"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" />
+                <label for="date">Date</label>
+            </p-iftalabel>
+
+            <div class=" mb-1 mt-4" *ngIf="recurrenceEdit()">
+                <label for="recurring">Recurring</label>
+                <p-checkbox class="m-1" id="recurring" formControlName="recurring" binary="true" />
+            </div>
+            <div class=" mb-1 mt-4" *ngIf="!recurrenceEdit()">
+                <label for="recurring">Recurring</label>
+                <p-checkbox class="m-1" id="recurring" formControlName="recurring" binary="true" />
+                <p class="text-sm">This is part of a recurring transaction. if you want to change the recurrence rules,
+                    edit
+                    the recurring transaction instead.</p>
+
+            </div>
+        </div>
+        <p-divider />
+        <div *ngIf="transactionForm.get('recurring')?.value && recurrenceEdit()">
+            <div class="flex justify-between">
+                <b>Recurrence rules:</b>
+                <p-button outlined="true" icon="pi pi-plus" (onClick)="addRule()"></p-button>
+            </div>
+            <div class="mt-4">
+                <p-card styleClass="mb-1" *ngFor="let rule of recurrenceRules">
+                    <div class="align-middle flex justify-between">
+                        <textarea rows="1" readonly pTextarea autoResize="true" class="w-7/8">{{rule}}</textarea>
+                        <p-button (onClick)="deleteRule(rule)" outlined="true" class="flex m-1 justify-self-end"
+                            size="small" icon="pi pi-trash" severity="danger"></p-button>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+        <!-- start of the recurrence rules form -->
+        <div class="flex flex-col justify-center w-full" formGroupName="rrule" *ngIf="newRrule()">
+            <span class="m-4 flex justify-center">
+                <p class=" pt-2">every</p>
+                <p-inputnumber class="m-1 mr-0" formControlName="interval" [min]="1"></p-inputnumber>
+                <p-select class="m-1 lg:w-1/3" formControlName="frequency" optionLabel="label" optionValue="value"
+                    [options]="frequencyValues"></p-select>
+            </span>
+            <!-- weekly recurrence -->
+            <div class="mb-4 flex justify-center gap-1" *ngIf="rrule.get('frequency')?.value === 'WEEKLY'">
+                <p-selectbutton style="flex-wrap: wrap;" formControlName="daysOfWeek" optionLabel="label"
+                    optionValue="value" [options]="daysOfWeek" multiple="true" />
+            </div>
+            <!-- monthly recurrence -->
+            <div class="justify-items-center flex-col" *ngIf="rrule.get('frequency')?.value === 'MONTHLY'">
+                <div class="mb-4"><p-selectbutton formControlName="monthlyPattern" [options]="monthlyPattern" /></div>
+                <div style="background-color: #f1f5f9;" class="mb-4 rounded-lg p-2"
+                    *ngIf="rrule.controls['monthlyPattern']?.value === 'Monthdays'">
+                    <!-- day of the month monthly recurrence -->
+                    <p-selectbutton style="flex-wrap: wrap;
+                     display: flex;
+                     width: 315px;" styleClass="month-days" multiple="true" formControlName="monthdays"
+                        [options]="monthdays" optionLabel="label" optionValue="value"></p-selectbutton>
+                </div>
+                <!-- day of the week monthly recurrence -->
+                <div class="flex justify-center mb-4" *ngIf="rrule.controls['monthlyPattern']?.value === 'Weekdays'">
+                    <p-select class="mr-1" formControlName="nth" [options]="nth"></p-select>
+                    <p-selectbutton style="flex-wrap: wrap;" formControlName="weekdays" [options]="daysOfWeek"
+                        optionLabel="label" optionValue="value" multiple="true" />
+                </div>
+            </div>
+            <!-- yearly recurrence -->
+            <div *ngIf="rrule.get('frequency')?.value === 'YEARLY'" class=" justify-items-center flex-col mb-4">
+                <div style="background-color: #f1f5f9;" class="rounded-lg p-2 m-4 mt-0">
+                    <p-selectbutton style="flex-wrap: wrap;
+                display: flex;
+                width: 245px;" multiple="true" formControlName="months" [options]="months" optionLabel="label"
+                        optionValue="value"></p-selectbutton>
+                </div>
+                <div class="mb-4"><p-selectbutton formControlName="monthlyPattern" [options]="monthlyPattern" /></div>
+                <div style="background-color: #f1f5f9;" class=" rounded-lg p-2"
+                    *ngIf="rrule.controls['monthlyPattern']?.value === 'Monthdays'">
+                    <!-- day of the month monthly recurrence -->
+                    <p-selectbutton style="flex-wrap: wrap;
+                     display: flex;
+                     width: 315px;" styleClass="month-days" multiple="true" formControlName="monthdays"
+                        [options]="monthdays" optionLabel="label" optionValue="value"></p-selectbutton>
+                </div>
+                <!-- day of the week monthly recurrence -->
+                <div class="flex justify-center" *ngIf="rrule.controls['monthlyPattern']?.value === 'Weekdays'">
+                    <p-select class="mr-1" formControlName="nth" [options]="nth" optionLabel="label"
+                        optionValue="value"></p-select>
+                    <p-selectbutton style="flex-wrap: wrap;" formControlName="weekdays" [options]="daysOfWeek"
+                        optionLabel="label" optionValue="value" multiple="true" />
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <div class="mt-2">
+                    <label for="end">End</label>
+                    <p-checkbox class="m-1" id="end" formControlName="end" binary="true" />
+                </div>
+                <div class="flex gap-3 flex-row" *ngIf="rrule.controls['end'].value === true">
+                    <p-selectbutton formControlName="endPattern" [options]="endPatterns" optionLabel="label"
+                        optionValue="value" />
+                    <div *ngIf="rrule.controls['endPattern']?.value === 'EndDate'">
+                        <p-datePicker formControlName="endDate" class="w-1/1" id="endDate" dateFormat="dd/mm/yy"
+                            [iconDisplay]="'input'" [showIcon]="true" />
+                    </div>
+                    <div *ngIf="rrule.controls['endPattern']?.value === 'Count'">
+                        <p-inputnumber formControlName="count" [min]="1"></p-inputnumber> times
+                    </div>
+                </div>
+                <div>
+                    <p-button icon="pi pi-save" outlined="true" [disabled]="!rrule.valid"
+                        (onClick)="saveRule()"></p-button>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 flex gap-2">
+            <p-button (onClick)="submitTransaction()" [disabled]="!transactionForm.valid">save</p-button>
+            <p-button severity="secondary" (onClick)="closeDialog()">cancel</p-button>
+        </div>
+    </form>
+</div>

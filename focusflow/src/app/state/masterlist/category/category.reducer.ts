@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { category } from "../../../models/data.models";
-import { LoadCategories, LoadCategoriesFailure, LoadCategoriesSuccess } from "./category.actions";
+import { AddCategory, AddCategoryFailure, AddCategorySuccess, LoadCategories, LoadCategoriesFailure, LoadCategoriesSuccess } from "./category.actions";
 
 export interface CategoriesState {
     categories: category[];
@@ -30,5 +30,23 @@ export const CategoriesReducer = createReducer(
         ...state,
         status: "error" as "error",
         error: error
-    }))
+    })),
+    on(AddCategory, (state) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(AddCategorySuccess, (state, { category }) => ({
+        ...state,
+        categories: [
+            ...state.categories, category
+        ],
+        status: "success" as "success",
+        error: ""
+    })),
+    on(AddCategoryFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),    
 )

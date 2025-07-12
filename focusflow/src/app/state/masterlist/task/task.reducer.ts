@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { task } from "../../../models/data.models";
-import { LoadTasks, LoadTasksSuccess, LoadTasksFailure } from "./task.actions";
+import { LoadTasks, LoadTasksSuccess, LoadTasksFailure, AddTask, AddTaskSuccess, AddTaskFailure } from "./task.actions";
 
 export interface TasksState {
     tasks: task[];
@@ -30,5 +30,24 @@ export const TasksReducer = createReducer(
         ...state,
         status: "error" as "error",
         error: error
-    }))
+    })),
+    on(AddTask, (state) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(AddTaskSuccess, (state, { task }) => ({
+        ...state,
+        tasks: [
+            ...state.tasks, task
+        ],
+        status: "success" as "success",
+        error: ""
+    })),
+    on(AddTaskFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
+ 
 )

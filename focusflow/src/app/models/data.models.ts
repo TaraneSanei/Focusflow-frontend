@@ -167,6 +167,8 @@ export interface event {
     Time?: time;
     Duration?: number;
     Priority: priority;
+    Location?: string;
+    Recurrence?: number;
     Done: boolean;
     ParentCategory?: number;
     ParentProject?: number;
@@ -183,6 +185,7 @@ export interface recurringEvent {
     RecurrenceRule: string;
     Duration?: number;
     Priority: priority;
+    Location?: string;
     ParentCategory?: number;
     ParentProject?: number;
     PointUnit?: string;
@@ -190,7 +193,3 @@ export interface recurringEvent {
     key: string;
 }
 
-// export interface MasterlistNode extends TreeNode{
-//     Node: category | project | task | subtask | event
-//     Children?: MasterlistNode[];
-// }

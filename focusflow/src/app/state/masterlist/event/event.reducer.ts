@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { event } from "../../../models/data.models";
-import { LoadEvents, LoadEventsSuccess, LoadEventsFailure } from "./event.actions";
+import { LoadEvents, LoadEventsSuccess, LoadEventsFailure, AddEvent, AddEventFailure, AddEventSuccess } from "./event.actions";
 
 export interface EventsState {
     events: event[];
@@ -30,5 +30,23 @@ export const EventsReducer = createReducer(
         ...state,
         status: "error" as "error",
         error: error
-    }))
+    })),
+    on(AddEvent, (state) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(AddEventSuccess, (state, { event }) => ({
+        ...state,
+        events: [
+            ...state.events, event
+        ],
+        status: "success" as "success",
+        error: ""
+    })),
+    on(AddEventFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
 )

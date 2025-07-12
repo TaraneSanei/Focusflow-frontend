@@ -14,3 +14,18 @@ export const LoadTasksFailure = createAction(
     '[backend] loading tasks failure',
     props<{error:string}>()
 );
+
+export const AddTask = createAction(
+    '[backend] add a new task',
+    props<{task: task}>()
+)
+
+export const AddTaskSuccess = createAction(
+    '[backend] add task success',
+    props<{task: task}>()
+)
+
+export const AddTaskFailure = createAction(
+    '[backend] add task failure',
+    props<{error:string}>()
+)

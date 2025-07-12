@@ -1,23 +1,27 @@
 <div class="flex justify-center">
-  <div class="flex h-1/1 gap-4 m-4 w-full p-2 lg:w-3/4 bg-slate-50 rounded-2xl">
+  <div class="flex h-1/1 gap-4 m-4 w-full lg:p-2 lg:w-3/4 bg-slate-50 rounded-2xl">
     <p-treetable rowHover="true" [value]="masterlistNode">
       <ng-template #header>
         <tr>
           <th>Title</th>
-          <th></th>
+          <th class="w-18 md:w-auto"></th>
         </tr>
       </ng-template>
 
       <ng-template #body let-rowNode>
         <tr [ttRow]="rowNode" (mouseenter)="hoveredRow = rowNode" (mouseleave)="hoveredRow = null">
           <td>
-            <span>
+            <div class="flex items-center gap-2">
               <p-treetable-toggler [rowNode]="rowNode" />
-              &nbsp;<i [class]="rowNode.node.icon" *ngIf="rowNode.node.icon"></i>
-              &nbsp;{{ rowNode.node.data?.Title || '-' }}
-            </span>
+              <i class="m-1.5" [class]="rowNode.node.icon" *ngIf="rowNode.node.icon"></i>
+              <span class="whitespace-normal break-words leading-snug">
+                {{ rowNode.node.data?.Title || '-' }}
+                <i *ngIf="rowNode.node.type === 'recurringTask' || rowNode.node.type === 'recurringSubtask' || rowNode.node.type === 'recurringEvent'"
+                  class="pi pi-replay" style="font-size: 0.75rem"></i>
+              </span>
+            </div>
           </td>
-          <td>
+          <td class="w-10 md:w-auto">
             <ng-container *ngIf="!isMobile; else mobileActions">
               <div class="flex justify-end">
                 <div
@@ -44,22 +48,13 @@
               </div>
             </ng-container>
             <ng-template #mobileActions>
-              <div class="flex justify-end">
-                <div
-                  class="actions-container right-2 top-0 bottom-0 flex gap-2 items-center opacity-0 transition-opacity duration-150"
-                  [ngClass]="{'opacity-100': hoveredRow === rowNode || rowNode.expanded}">
-                  <p-speeddial  [model]="getMenuItems(rowNode.node)" direction="left" class="mr-2">
-                    <ng-template #button let-toggleCallback="toggleCallback">
-                      <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" rounded="true"
-                        (click)="toggleCallback($event)">
-                      </p-button>
-                    </ng-template> <ng-template #item let-item let-toggleCallback="toggleCallback">
-                      <p-button size="small" severity="secondary" rounded="true" [icon]="item.icon"
-                        (click)="toggleCallback($event, item)">
-                      </p-button>
-                    </ng-template>
-                  </p-speeddial>
-                </div>
+              <div class="flex justify-end relative z-10">
+                <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" rounded="true"
+                  (click)="menu.toggle($event)">
+                </p-button>
+                <p-menu [style]="{ width: '12rem', maxWidth: '90vw' }" [baseZIndex]="1000" appendTo="body" #menu
+                  [model]="getMenuItems(rowNode.node)" [popup]="true">
+                </p-menu>
               </div>
             </ng-template>
 

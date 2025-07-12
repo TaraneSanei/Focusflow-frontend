@@ -14,3 +14,18 @@ export const LoadEventsFailure = createAction(
     '[backend] loading events failure',
     props<{error:string}>()
 );
+
+export const AddEvent = createAction(
+    '[backend] add a new event',
+    props<{event: event}>()
+)
+
+export const AddEventSuccess = createAction(
+    '[backend] add event success',
+    props<{event: event}>()
+)
+
+export const AddEventFailure = createAction(
+    '[backend] add event failure',
+    props<{error:string}>()
+)

@@ -30,6 +30,12 @@ import { ProjectsReducer } from './state/masterlist/project/project.reducer';
 import { TasksReducer } from './state/masterlist/task/task.reducer';
 import { SubtasksReducer } from './state/masterlist/subtask/subtask.reducer';
 import { EventsReducer } from './state/masterlist/event/event.reducer';
+import { RecurringEventsReducer } from './state/masterlist/recurringEvent/recurringEvent.reducer';
+import { RecurringSubtasksReducer } from './state/masterlist/recurringSubtask/recurringSubtask.reducer';
+import { RecurringTasksReducer } from './state/masterlist/recurringTask/recurringTask.reducer';
+import { RecurringTasksEffects } from './state/masterlist/recurringTask/recurringTask.effects';
+import { RecurringSubtasksEffects } from './state/masterlist/recurringSubtask/recurringSubtask.effects';
+import { RecurringEventsEffects } from './state/masterlist/recurringEvent/recurringEvent.effects';
 
 
 export const appConfig: ApplicationConfig = {
@@ -54,7 +60,10 @@ export const appConfig: ApplicationConfig = {
       projects: ProjectsReducer,  
       tasks: TasksReducer,
       subtasks: SubtasksReducer,
-      events: EventsReducer
+      events: EventsReducer,
+      recurringTasks: RecurringTasksReducer,
+      recurringSubtasks: RecurringSubtasksReducer,
+      recurringEvents: RecurringEventsReducer
     }),
     provideEffects([
       EmotionEffects,
@@ -66,7 +75,10 @@ export const appConfig: ApplicationConfig = {
       ProjectsEffects,
       TasksEffects,
       SubtasksEffects,
-      EventsEffects
+      EventsEffects,
+      RecurringTasksEffects,
+      RecurringSubtasksEffects,
+      RecurringEventsEffects
     ]),
     provideStoreDevtools({ 
       maxAge: 25, 

@@ -35,6 +35,8 @@ export class FocusflowService {
     return this.httpclient.delete<JournalEntry>(this.apiURL + 'journal/' + journalEntry.id)
   }
 
+
+  //money
   
   getPayments(year: string, month:string){
     return this.httpclient.get<payment[]>(this.apiURL + 'money/payments?year='+ year +'&month=' + month)
@@ -44,8 +46,6 @@ export class FocusflowService {
     return this.httpclient.get<income[]>(this.apiURL + 'money/incomes?year='+ year + '&month=' + month)
   }
   
-
-  // money
   addIncome(income: income){
     return this.httpclient.post<income>(this.apiURL + 'money/incomes', income)
   }
@@ -121,7 +121,38 @@ export class FocusflowService {
   getRecurringEvents(){
     return this.httpclient.get<recurringEvent[]>(this.apiURL + 'masterlist/recurringevents');
   }
-  
+
+  addCategory(category: category){
+    return this.httpclient.post<category>(this.apiURL + 'masterlist/categories', category)
+  }
+
+  addProject(project: project){
+    return this.httpclient.post<project>(this.apiURL + 'masterlist/projects', project)
+  }
+
+  addTask(task: task){
+    return this.httpclient.post<task>(this.apiURL + 'masterlist/tasks', task)
+  }
+
+  addSubtask(subtask: subtask){
+    return this.httpclient.post<subtask>(this.apiURL + 'masterlist/subtasks', subtask)
+  }
+
+  addEvent(event: event){
+    return this.httpclient.post<event>(this.apiURL + 'masterlist/events', event)
+  }
+
+  addRecurringTask(recurringTask: recurringTask){
+    return this.httpclient.post<recurringTask>(this.apiURL + 'masterlist/recurringtasks', recurringTask)
+  }
+
+  addRecurringSubtask(recurringSubtask: recurringSubtask){
+    return this.httpclient.post<recurringSubtask>(this.apiURL + 'masterlist/recurringsubtasks', recurringSubtask)
+  }
+
+  addRecurringEvent(event: recurringEvent){
+    return this.httpclient.post<recurringEvent>(this.apiURL + 'masterlist/recurringevents', event)
+  }
 
   DateToString(Date: Date): string {
     let StrDate = "";

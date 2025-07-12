@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { mergeMap, from, map, catchError, of } from "rxjs";
 import { FocusflowService } from "../../../focusflow.service";
-import { LoadProjects, LoadProjectsSuccess, LoadProjectsFailure } from "./project.actions";
+import { LoadProjects, LoadProjectsSuccess, LoadProjectsFailure, AddProject, AddProjectFailure, AddProjectSuccess } from "./project.actions";
 
 @Injectable()
 export class ProjectsEffects {
@@ -18,4 +18,16 @@ export class ProjectsEffects {
                 map((response) => LoadProjectsSuccess({projects: response})),
                 catchError((error)=> of(LoadProjectsFailure({error: error})))
             ))));
+
+    addProject$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(AddProject),
+            mergeMap((action) =>
+                from(this.focusflowService.addProject(action.project)).pipe(
+                    map((response) => AddProjectSuccess({ project: response })),
+                    catchError((error) => of(AddProjectFailure({ error: error })))
+                )
+            )
+        )
+    );
         }

@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { project } from "../../../models/data.models";
-import { LoadProjects, LoadProjectsSuccess, LoadProjectsFailure } from "./project.actions";
+import { LoadProjects, LoadProjectsSuccess, LoadProjectsFailure, AddProject, AddProjectSuccess, AddProjectFailure } from "./project.actions";
 
 export interface ProjectsState {
     projects: project[];
@@ -30,5 +30,23 @@ export const ProjectsReducer = createReducer(
         ...state,
         status: "error" as "error",
         error: error
-    }))
+    })),
+    on(AddProject, (state) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(AddProjectSuccess, (state, { project }) => ({
+        ...state,
+        projects: [
+            ...state.projects, project
+        ],
+        status: "success" as "success",
+        error: ""
+    })),
+    on(AddProjectFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
 )

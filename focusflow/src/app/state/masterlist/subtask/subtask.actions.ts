@@ -16,3 +16,18 @@ export const LoadSubtasksFailure = createAction(
     '[backend] loading subtasks failure',
     props<{error:string}>()
 );
+
+export const AddSubtask = createAction(
+    '[backend] add a new subtask',
+    props<{subtask: subtask}>()
+)
+
+export const AddSubtaskSuccess = createAction(
+    '[backend] add subtask success',
+    props<{subtask: subtask}>()
+)
+
+export const AddSubtaskFailure = createAction(
+    '[backend] add subtask failure',
+    props<{error:string}>()
+)

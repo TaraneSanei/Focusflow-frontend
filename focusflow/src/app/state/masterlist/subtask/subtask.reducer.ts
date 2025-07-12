@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { subtask } from "../../../models/data.models";
-import { LoadSubtasks, LoadSubtasksSuccess, LoadSubtasksFailure } from "./subtask.actions";
+import { LoadSubtasks, LoadSubtasksSuccess, LoadSubtasksFailure, AddSubtask, AddSubtaskSuccess, AddSubtaskFailure } from "./subtask.actions";
 
 
 export interface SubtasksState {
@@ -29,6 +29,24 @@ export const SubtasksReducer = createReducer(
         error: ""
     })),
     on(LoadSubtasksFailure, (state, {error}) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
+    on(AddSubtask, (state) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(AddSubtaskSuccess, (state, { subtask }) => ({
+        ...state,
+        subtasks: [
+            ...state.subtasks, subtask
+        ],
+        status: "success" as "success",
+        error: ""
+    })),
+    on(AddSubtaskFailure, (state, { error }) => ({
         ...state,
         status: "error" as "error",
         error: error

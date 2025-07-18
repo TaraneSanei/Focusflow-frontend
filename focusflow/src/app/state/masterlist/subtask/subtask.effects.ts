@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { mergeMap, from, map, catchError, of } from "rxjs";
 import { FocusflowService } from "../../../focusflow.service";
-import { LoadSubtasks, LoadSubtasksSuccess, LoadSubtasksFailure, AddSubtask, AddSubtaskFailure, AddSubtaskSuccess } from "./subtask.actions";
+import { LoadSubtasks, LoadSubtasksSuccess, LoadSubtasksFailure, AddSubtask, AddSubtaskFailure, AddSubtaskSuccess, DeleteSubtask, DeleteSubtaskFailure, DeleteSubtaskSuccess, EditSubtask, EditSubtaskFailure, EditSubtaskSuccess } from "./subtask.actions";
 
 @Injectable()
 export class SubtasksEffects {
@@ -32,4 +32,23 @@ export class SubtasksEffects {
             )
         )
     );
+
+       
+        deleteSubtask$ = createEffect(() =>
+            this.actions$.pipe(
+                ofType(DeleteSubtask),
+                mergeMap((action) =>
+                    from(this.focusflowService.deleteSubtask(action.subtask)).pipe(
+                        map(() => DeleteSubtaskSuccess({ subtask: action.subtask })),
+                        catchError((error) => of(DeleteSubtaskFailure({ error: error })))
+                    ))));
+    
+        editSubtask$ = createEffect(() =>
+            this.actions$.pipe(
+                ofType(EditSubtask),
+                mergeMap((action) =>
+                    from(this.focusflowService.editSubtask(action.subtask)).pipe(
+                        map(() => EditSubtaskSuccess({ subtask: action.subtask })),
+                        catchError((error) => of(EditSubtaskFailure({ error: error })))
+                    ))))
 }

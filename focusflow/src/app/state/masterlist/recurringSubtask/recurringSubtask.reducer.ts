@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { recurringSubtask } from "../../../models/data.models";
-import { LoadRecurringSubtasks, LoadRecurringSubtasksSuccess, LoadRecurringSubtasksFailure, AddRecurringSubtask, AddRecurringSubtaskSuccess, AddRecurringSubtaskFailure } from "./recurringSubtask.actions";
+import { LoadRecurringSubtasks, LoadRecurringSubtasksSuccess, LoadRecurringSubtasksFailure, AddRecurringSubtask, AddRecurringSubtaskSuccess, AddRecurringSubtaskFailure, DeleteRecurringSubtask, DeleteRecurringSubtaskSuccess, DeleteRecurringSubtaskFailure, EditRecurringSubtask, EditRecurringSubtaskSuccess, EditRecurringSubtaskFailure } from "./recurringSubtask.actions";
 
 
 export interface RecurringSubtasksState {
@@ -50,5 +50,54 @@ export const RecurringSubtasksReducer = createReducer(
         ...state,
         status: "error" as "error",
         error: error
-    }))
+    })),
+    
+    on(DeleteRecurringSubtask, (state, { recurringSubtask }) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(DeleteRecurringSubtaskSuccess, (state, { recurringSubtask }) => ({
+        ...state,
+        recurringSubtasks: state.recurringSubtasks.filter((r) => r.id !== recurringSubtask.id),
+        status: "success" as "success",
+        error: ""
+    })),
+    on(DeleteRecurringSubtaskFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
+    on(EditRecurringSubtask, (state, { recurringSubtask }) => ({
+        ...state,
+        error: "",
+        status: "loading" as "loading"
+    })),
+    on(EditRecurringSubtaskSuccess, (state, { recurringSubtask }) => ({
+        ...state,
+        recurringSubtasks: state.recurringSubtasks.map(r =>
+            r.id === recurringSubtask.id
+                ? {
+                    ...r,
+                    id: recurringSubtask.id,
+                    Title: recurringSubtask.Title,
+                    Description: recurringSubtask.Description,
+                    Duration: recurringSubtask.Duration,                    RecurrenceRule: recurringSubtask.RecurrenceRule,
+                    Priority: recurringSubtask.Priority,
+                    ParentTask: recurringSubtask.ParentTask,
+                    Points: recurringSubtask.Points,
+                    PointUnit: recurringSubtask.PointUnit,
+                    key: recurringSubtask.key
+                } : r
+        ),
+        status: "success" as "success",
+        error: ""
+    })),
+    on(EditRecurringSubtaskFailure, (state, { error }) => ({
+        ...state,
+        status: "error" as "error",
+        error: error
+    })),
+    
+    
 )

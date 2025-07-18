@@ -29,3 +29,35 @@ export const AddEventFailure = createAction(
     '[backend] add event failure',
     props<{error:string}>()
 )
+
+export const DeleteEvent = createAction(
+    '[backend] delete event',
+    props<{event: event}>()
+);
+
+export const DeleteEventSuccess = createAction(
+    '[backend] delete event success',
+    props<{event: event}>()
+);
+
+export const DeleteEventFailure = createAction(
+    '[backend] delete event failure',
+    props<{error: string}>()
+);
+//edit single Event actions
+
+export const EditEvent = createAction(
+    '[backend] edit event',
+    props<{event: event}>()
+);
+
+export const EditEventSuccess = createAction(
+    '[backend] edit event success',
+    props<{event: event}>()
+);
+
+export const EditEventFailure = createAction(
+    '[backend] edit event failure',
+    props<{error: string}>()
+);
+

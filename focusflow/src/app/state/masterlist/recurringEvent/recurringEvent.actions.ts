@@ -30,3 +30,36 @@ export const AddRecurringEventFailure = createAction(
     '[backend] add recurringEvent failure',
     props<{error:string}>()
 )
+
+
+export const DeleteRecurringEvent = createAction(
+    '[backend] delete recurringEvent',
+    props<{recurringEvent: recurringEvent}>()
+);
+
+export const DeleteRecurringEventSuccess = createAction(
+    '[backend] delete recurringEvent success',
+    props<{recurringEvent: recurringEvent}>()
+);
+
+export const DeleteRecurringEventFailure = createAction(
+    '[backend] delete recurringEvent failure',
+    props<{error: string}>()
+);
+//edit single RecurringEvent actions
+
+export const EditRecurringEvent = createAction(
+    '[backend] edit recurringEvent',
+    props<{recurringEvent: recurringEvent}>()
+);
+
+export const EditRecurringEventSuccess = createAction(
+    '[backend] edit recurringEvent success',
+    props<{recurringEvent: recurringEvent}>()
+);
+
+export const EditRecurringEventFailure = createAction(
+    '[backend] edit recurringEvent failure',
+    props<{error: string}>()
+);
+

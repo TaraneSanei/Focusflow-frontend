@@ -26,7 +26,7 @@ import { selectRecurringSubtasks } from '../state/masterlist/recurringSubtask/re
 import { selectRecurringTasks } from '../state/masterlist/recurringTask/recurringTask.selector';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { MenuModule } from 'primeng/menu';
-
+import { DragDropModule } from 'primeng/dragdrop';
 
 @Component({
   selector: 'app-masterlist',
@@ -36,12 +36,17 @@ import { MenuModule } from 'primeng/menu';
     ButtonModule,
     SpeedDialModule,
     SplitButtonModule,
-    MenuModule
+    MenuModule,
+    DragDropModule
   ],
   templateUrl: './masterlist.component.html',
   styleUrl: './masterlist.component.css'
 })
 export class MasterlistComponent {
+
+addCategory(arg0: any) {
+throw new Error('Method not implemented.');
+}
 
   isMobile = false;
   categories = signal<category[]>([])
@@ -52,7 +57,16 @@ export class MasterlistComponent {
   recurringTasks = signal<recurringTask[]>([])
   recurringSubtasks = signal<recurringSubtask[]>([])
   recurringEvents = signal<recurringEvent[]>([])
-  masterlistNode: TreeNode<category | project | task | subtask | event | recurringTask | recurringSubtask | recurringEvent>[] = [];
+  masterlistNode: TreeNode<category | project | task | subtask | event | recurringTask | recurringSubtask | recurringEvent>[] = [
+              {
+          key: '',
+          label: '',
+          type: 'newChildCategory',
+          data: undefined,
+          children: [],
+          icon: ""
+        }
+  ];
   hoveredRow: TreeNode<any> | null = null;
   processedNodes = new Set<string>();
 
@@ -96,7 +110,16 @@ export class MasterlistComponent {
 
 
   buildMasterlist() {
-    this.masterlistNode = [];
+    this.masterlistNode = [
+                    {
+          key: '',
+          label: '',
+          type: 'newChildCategory',
+          data: undefined,
+          children: [],
+          icon: ""
+        }
+    ];
     this.processedNodes.clear();
     this.categories().forEach(c => this.makeNode(c))
     this.projects().forEach(c => this.makeNode(c))
@@ -121,6 +144,7 @@ export class MasterlistComponent {
       // Only access Recurrence if n is a subtask (not recurringSubtask)
       if (!('Recurrence' in n) || n.Recurrence === null) {
         const nodeN: TreeNode<subtask> = {
+          key: n.key,
           label: n.Title,
           type: 'subtask',
           data: n,
@@ -139,6 +163,7 @@ export class MasterlistComponent {
     } else if ('ParentTask' in n && 'RecurrenceRule' in n) { //adding recurring subtasks
     // Only access Recurrence if n is a recurringSubtask (not subtask)
     const nodeN: TreeNode<recurringSubtask> = {
+        key: n.key,
         label: n.Title + ' (Recurring)',
         type: 'recurringSubtask',
         data: n,
@@ -155,6 +180,7 @@ export class MasterlistComponent {
 } else if ('ParentCategory' in n && 'ParentProject' in n && !('Location' in n) && !('RecurrenceRule' in n)) {
       if (!('Recurrence' in n) || n.Recurrence === null) {
         const nodeN: TreeNode<task> = {
+          key: n.key,
           label: n.Title,
           type: 'task',
           data: n,
@@ -183,6 +209,7 @@ export class MasterlistComponent {
       //adding recurring tasks
     } else if ('ParentCategory' in n && 'ParentProject' in n && 'RecurrenceRule' in n && !('Location' in n)) {
       const nodeN: TreeNode<recurringTask> = {
+        key: n.key,
         label: n.Title + ' (Recurring)',
         type: 'recurringTask',
         data: n,
@@ -196,7 +223,6 @@ export class MasterlistComponent {
           this.makeNode(p!)
         }
         this.parentify(nodeN, p!, this.masterlistNode)
-
       } else if (n.ParentProject !== null) {
         const p = this.projects().find(t => t.id === n.ParentProject)
         if (!this.masterlistNode.find(treenode => treenode.data === p!)) {
@@ -211,6 +237,7 @@ export class MasterlistComponent {
 
     } else if ('BackBurner' in n) {
       const nodeN: TreeNode<project> = {
+        key: n.key,
         label: n.Title,
         type: 'project',
         data: n,
@@ -229,6 +256,7 @@ export class MasterlistComponent {
       }
     } else if (!('Priority' in n)) {
       const nodeN: TreeNode<category> = {
+        key: n.key,
         label: n.Title,
         type: 'category',
         data: n,
@@ -248,6 +276,7 @@ export class MasterlistComponent {
     } else if ('Location' in n && (!('RecurrenceRule' in n))) {
       if (!('Recurrence' in n) || n.Recurrence === null) {
         const nodeN: TreeNode<event> = {
+          key: n.key,
           label: n.Title,
           type: 'event',
           data: n,
@@ -273,6 +302,7 @@ export class MasterlistComponent {
       }
     } else if ('RecurrenceRule' in n && 'Location' in n) {
       const nodeN: TreeNode<recurringEvent> = {
+        key: n.key,
         label: n.Title + ' (Recurring)',
         type: 'recurringEvent',
         data: n,

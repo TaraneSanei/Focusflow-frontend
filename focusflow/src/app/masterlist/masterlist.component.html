@@ -1,64 +1,85 @@
 <div class="flex justify-center">
   <div class="flex h-1/1 gap-4 m-4 w-full lg:p-2 lg:w-3/4 bg-slate-50 rounded-2xl">
     <p-treetable rowHover="true" [value]="masterlistNode">
-      <ng-template #header>
+      <!-- <ng-template pTemplate="header">
         <tr>
           <th>Title</th>
-          <th class="w-18 md:w-auto"></th>
+          <th class="w-18 lg:w-auto"></th>
         </tr>
-      </ng-template>
-
+      </ng-template> -->
       <ng-template #body let-rowNode>
-        <tr [ttRow]="rowNode" (mouseenter)="hoveredRow = rowNode" (mouseleave)="hoveredRow = null">
-          <td>
-            <div class="flex items-center gap-2">
-              <p-treetable-toggler [rowNode]="rowNode" />
-              <i class="m-1.5" [class]="rowNode.node.icon" *ngIf="rowNode.node.icon"></i>
-              <span class="whitespace-normal break-words leading-snug">
-                {{ rowNode.node.data?.Title || '-' }}
-                <i *ngIf="rowNode.node.type === 'recurringTask' || rowNode.node.type === 'recurringSubtask' || rowNode.node.type === 'recurringEvent'"
-                  class="pi pi-replay" style="font-size: 0.75rem"></i>
-              </span>
-            </div>
-          </td>
-          <td class="w-10 md:w-auto">
-            <ng-container *ngIf="!isMobile; else mobileActions">
-              <div class="flex justify-end">
-                <div
-                  class="actions-container right-2 top-0 bottom-0 flex gap-2 items-center opacity-0 transition-opacity duration-150"
-                  [ngClass]="{'opacity-100': hoveredRow === rowNode || rowNode.expanded}">
-                  <p-button *ngIf="rowNode.node.type === 'project'" class="mr-2" icon="pi pi-clock" severity="secondary"
-                    size="small" rounded="true"> </p-button>
-                  <p-button
-                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
-                    class="mr-2" icon="pi pi-check" severity="secondary" size="small" rounded="true"> </p-button>
-                  <p-button class="mr-2" icon="pi pi-plus" severity="secondary" size="small" rounded="true"> </p-button>
-                  <p-button
-                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
-                    class="mr-2" icon="pi pi-hourglass" severity="secondary" size="small" rounded="true"> </p-button>
-                  <p-button
-                    *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
-                    class="mr-2" icon="pi pi-calendar-clock" severity="secondary" size="small" rounded="true">
-                  </p-button>
-                  <p-button class="mr-2" icon="pi pi-book" severity="secondary" size="small" rounded="true"> </p-button>
-                  <p-button class="mr-2" icon="pi pi-cog" severity="secondary" size="small" rounded="true"> </p-button>
-                  <p-button class="mr-2" icon="pi pi-trash" severity="secondary" size="small" rounded="true">
-                  </p-button>
+        <tr [ttRow]="rowNode" (mouseenter)="hoveredRow = rowNode" (mouseleave)="hoveredRow = null" draggable="true"
+          droppable="true">
+          <ng-container *ngIf="rowNode.node.type === 'newChildCategory'; else regularRow">
+            <td colspan="2">
+              <div class="flex justify-between gap-2 w-full">
+                <div class="border-dashed w-1/3 items-center justify-center border-2 flex p-2 rounded-2xl">
+                  <p-button icon="pi pi-folder" severity="secondary" size="small" rounded="true"
+                    (click)="addCategory(rowNode.node)"></p-button>
+                </div>
+                <div class="border-dashed w-1/3 items-center justify-center border-2 flex p-2 rounded-2xl">
+                  <p-button icon="pi pi-flag" severity="secondary" size="small" rounded="true"
+                    (click)="addCategory(rowNode.node)"></p-button>
+              </div>
+                <div class="border-dashed w-1/3 items-center justify-center border-2 flex p-2 rounded-2xl">
+                  <p-button icon="pi pi-bullseye" severity="secondary" size="small" rounded="true"
+                    (click)="addCategory(rowNode.node)"></p-button>
                 </div>
               </div>
-            </ng-container>
-            <ng-template #mobileActions>
-              <div class="flex justify-end relative z-10">
-                <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" rounded="true"
-                  (click)="menu.toggle($event)">
-                </p-button>
-                <p-menu [style]="{ width: '12rem', maxWidth: '90vw' }" [baseZIndex]="1000" appendTo="body" #menu
-                  [model]="getMenuItems(rowNode.node)" [popup]="true">
-                </p-menu>
+          </ng-container>
+          <ng-template #regularRow>
+            <td>
+              <div class="flex items-center gap-2">
+                <p-treetable-toggler [rowNode]="rowNode" />
+                <i class="m-1.5" [class]="rowNode.node.icon" *ngIf="rowNode.node.icon"></i>
+                <span class="whitespace-normal break-words leading-snug">
+                  {{ rowNode.node.label || '-' }}
+                  <i *ngIf="rowNode.node.type === 'recurringTask' || rowNode.node.type === 'recurringSubtask' || rowNode.node.type === 'recurringEvent'"
+                    class="pi pi-replay" style="font-size: 0.75rem"></i>
+                </span>
               </div>
-            </ng-template>
-
-          </td>
+            </td>
+            <td class="w-10 md:w-auto">
+              <ng-container *ngIf="!isMobile; else mobileActions">
+                <div class="flex justify-end">
+                  <div
+                    class="actions-container right-2 top-0 bottom-0 flex gap-2 items-center opacity-0 transition-opacity duration-150"
+                    [ngClass]="{'opacity-100': hoveredRow === rowNode || rowNode.expanded}">
+                    <p-button *ngIf="rowNode.node.type === 'project'" class="mr-2" icon="pi pi-clock"
+                      severity="secondary" size="small" rounded="true"> </p-button>
+                    <p-button
+                      *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                      class="mr-2" icon="pi pi-check" severity="secondary" size="small" rounded="true"> </p-button>
+                    <p-button class="mr-2" icon="pi pi-plus" severity="secondary" size="small" rounded="true">
+                    </p-button>
+                    <p-button
+                      *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                      class="mr-2" icon="pi pi-hourglass" severity="secondary" size="small" rounded="true"> </p-button>
+                    <p-button
+                      *ngIf="rowNode.node.type === 'project' || rowNode.node.type === 'task' || rowNode.node.type === 'subtask'"
+                      class="mr-2" icon="pi pi-calendar-clock" severity="secondary" size="small" rounded="true">
+                    </p-button>
+                    <p-button class="mr-2" icon="pi pi-book" severity="secondary" size="small" rounded="true">
+                    </p-button>
+                    <p-button class="mr-2" icon="pi pi-cog" severity="secondary" size="small" rounded="true">
+                    </p-button>
+                    <p-button class="mr-2" icon="pi pi-trash" severity="secondary" size="small" rounded="true">
+                    </p-button>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #mobileActions>
+                <div class="flex justify-end relative z-10">
+                  <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" rounded="true"
+                    (click)="menu.toggle($event)">
+                  </p-button>
+                  <p-menu [style]="{ width: '12rem', maxWidth: '90vw' }" [baseZIndex]="1000" appendTo="body" #menu
+                    [model]="getMenuItems(rowNode.node)" [popup]="true">
+                  </p-menu>
+                </div>
+              </ng-template>
+            </td>
+          </ng-template>
         </tr>
       </ng-template>
     </p-treetable>

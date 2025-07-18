@@ -154,6 +154,70 @@ export class FocusflowService {
     return this.httpclient.post<recurringEvent>(this.apiURL + 'masterlist/recurringevents', event)
   }
 
+  editCategory(category: category){
+    return this.httpclient.put<category>(this.apiURL + 'masterlist/categories/' + category.id, category);
+  }
+
+  deleteCategory(category: category){
+    return this.httpclient.delete<category>(this.apiURL + 'masterlist/categories/' + category.id);
+  }
+
+  editEvent(event: event){
+    return this.httpclient.put<event>(this.apiURL + 'masterlist/events/' + event.id, event);
+  }
+
+  deleteEvent(event: event){
+    return this.httpclient.delete<event>(this.apiURL + 'masterlist/events/' + event.id);
+  }
+
+  editTask(task: task){
+    return this.httpclient.put<task>(this.apiURL + 'masterlist/tasks/' + task.id, task);
+  }
+
+  deleteTask(task: task){
+    return this.httpclient.delete<task>(this.apiURL + 'masterlist/tasks/' + task.id);
+  }
+
+  editSubtask(subtask: subtask){
+    return this.httpclient.put<subtask>(this.apiURL + 'masterlist/subtasks/' + subtask.id, subtask);
+  }
+
+  deleteSubtask(subtask: subtask){
+    return this.httpclient.delete<subtask>(this.apiURL + 'masterlist/subtasks/' + subtask.id);
+  }
+
+  editRecurringEvent(event: recurringEvent){
+    return this.httpclient.put<recurringEvent>(this.apiURL + 'masterlist/recurringevents/' + event.id, event);
+  }
+
+  deleteRecurringEvent(event: recurringEvent){
+    return this.httpclient.delete<recurringEvent>(this.apiURL + 'masterlist/recurringevents/' + event.id);
+  }
+
+  editRecurringTask(recurringTask: recurringTask){
+    return this.httpclient.put<recurringTask>(this.apiURL + 'masterlist/recurringtasks/' + recurringTask.id, recurringTask);
+  }
+
+  deleteRecurringTask(recurringTask: recurringTask){
+    return this.httpclient.delete<recurringTask>(this.apiURL + 'masterlist/recurringtasks/' + recurringTask.id);
+  }
+
+  editRecurringSubtask(recurringSubtask: recurringSubtask){
+    return this.httpclient.put<recurringSubtask>(this.apiURL + 'masterlist/recurringsubtasks/' + recurringSubtask.id, recurringSubtask);
+  }
+
+  deleteRecurringSubtask(recurringSubtask: recurringSubtask){
+    return this.httpclient.delete<recurringSubtask>(this.apiURL + 'masterlist/recurringsubtasks/' + recurringSubtask.id);
+  }
+
+  deleteProject(project: project){
+    return this.httpclient.delete<project>(this.apiURL + 'masterlist/projects/' + project.id);
+  }
+
+  editProject(project: project){
+    return this.httpclient.put<project>(this.apiURL + 'masterlist/projects/' + project.id, project);
+  }
+
   DateToString(Date: Date): string {
     let StrDate = "";
     let Year = Date.getFullYear();
